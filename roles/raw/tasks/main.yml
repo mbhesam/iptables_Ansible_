@@ -1,0 +1,28 @@
+---
+# if output file exists output.yml excutes
+- name: get OUTPUT file
+  stat:
+    path: '{{ playbook_dir }}/files/raw/OUTPUT.txt'
+  register: output_file
+
+- name: check existance of OUTPUT file and excute task of it
+  include_tasks: replace_rules.yml
+  when: output_file.stat.exists
+  vars:
+    chain: "OUTPUT"  
+
+# if prerouting file exists prerouting.yml excutes
+- name: get PREROUTING file
+  stat:
+    path: '{{ playbook_dir }}/files/raw/PREROUTING.txt'
+  register: prerouting_file
+
+- name: check existance of PREROUTING file and excute task of it
+  include_tasks: replace_rules.yml
+  when: prerouting_file.stat.exists
+  vars:
+    chain: "PREROUTING"
+
+#saving iptables permanent
+- name: save iptables permanently 
+  shell: iptables-restore < /etc/iptables/rules.v4

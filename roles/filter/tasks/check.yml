@@ -1,0 +1,12 @@
+---
+- name: check OS distribution
+  fail: msg="Sorry. The playbook can only run on Debian Based distribution"
+  vars:
+    excluded_dist: ['Debian','Ubuntu']
+  when: ansible_distribution not in {{excluded_dist}}
+
+- name: exit from running 
+  meta: end_play
+  vars:
+    excluded_dist: ['Debian','Ubuntu']
+  when: ansible_distribution not in {{excluded_dist}}

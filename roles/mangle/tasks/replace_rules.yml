@@ -1,0 +1,21 @@
+# read rules file from table directory with appopriate chian name file then reverse it 
+- name: Read items from file
+  ignore_errors: true
+  set_fact:
+    rules: "{{ lookup('file', '{{ playbook_dir }}/files/mangle/{{chain}}.txt').split('\n') | reverse | list }}"
+
+- name: Remove existing {{chain}} rules
+  shell: | 
+    iptables -t mangle -F {{chain}}
+    iptables-save > /etc/iptables/rules.v4
+
+- name: Add new {{chain}} rules
+  lineinfile:
+    path: /etc/iptables/rules.v4
+    line: "{{ item }}"
+    state: present
+    insertafter: '\*mangle\n'
+  with_items: "{{rules}}"
+  
+- name: Save rules in table mangle with {{chain}} chain
+  shell: iptables-restore < /etc/iptables/rules.v4

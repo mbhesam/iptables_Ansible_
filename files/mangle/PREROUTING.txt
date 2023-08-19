@@ -1,0 +1,1 @@
+-A PREROUTING -p icmp --icmp-type echo-request -j TTL --ttl-set 64

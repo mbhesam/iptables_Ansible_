@@ -1,0 +1,43 @@
+---
+- include_tasks: check.yml
+
+- name: install iptables-presistent on Debian Based distribution
+  apt:
+    name: iptables-persistent
+    state: present
+
+# if input file exists input.yml excutes
+- name: get INPUT file
+  stat:
+    path: '{{ playbook_dir }}/files/filter/INPUT.txt'
+  register: input_file
+
+- name: check existance of INPUT file and excute task of it
+  include_tasks: replace_rules.yml
+  when: input_file.stat.exists
+  vars:
+    chain: "INPUT"
+
+# if output file exists output.yml excutes
+- name: get OUTPUT file
+  stat:
+    path: '{{ playbook_dir }}/files/filter/OUTPUT.txt'
+  register: output_file
+
+- name: check existance of OUTPUT file and excute task of it
+  include_tasks: replace_rules.yml
+  when: output_file.stat.exists
+  vars:
+    chain: "OUTPUT"  
+
+# if forward file exists forward.yml excutes
+- name: get FORWARD file
+  stat:
+    path: '{{ playbook_dir }}/files/filter/FORWARD.txt'
+  register: forward_file
+
+- name: check existance of FORWARD file and excute task of it
+  include_tasks: replace_rules.yml
+  when: forward_file.stat.exists
+  vars:
+    chain: "FORWARD"

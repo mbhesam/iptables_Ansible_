@@ -1,0 +1,36 @@
+---
+# if prerouting file exists input.yml excutes
+- name: get PREROUTING file
+  stat:
+    path: '{{ playbook_dir }}/files/nat/PREROUTING.txt'
+  register: prerouting_file
+
+- name: check existance of PREROUTING file and excute task of it
+  include_tasks: replace_rules.yml
+  when: prerouting_file.stat.exists
+  vars:
+    chain: "PREROUTING"
+
+# if output file exists output.yml excutes
+- name: get OUTPUT file
+  stat:
+    path: '{{ playbook_dir }}/files/nat/OUTPUT.txt'
+  register: output_file
+
+- name: check existance of OUTPUT file and excute task of it
+  include_tasks: replace_rules.yml
+  when: output_file.stat.exists
+  vars:
+    chain: "OUTPUT"  
+
+# if postrouting file exists forward.yml excutes
+- name: get POSTROUTING file
+  stat:
+    path: '{{ playbook_dir }}/files/filter/POSTROUTING.txt'
+  register: postrouting_file
+
+- name: check existance of FORWARD file and excute task of it
+  include_tasks: replace_rules.yml
+  when: postrouting_file.stat.exists
+  vars:
+    chain: "POSTROUTING"
